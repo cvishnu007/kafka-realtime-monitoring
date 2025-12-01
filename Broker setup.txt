@@ -1,0 +1,62 @@
+Team : 136
+Name: Chiyedu Vishnu
+Zero Tier Assigned IP : 172.22.165.97
+-----------------------------------------
+
+1. Configure Kafka broker properties
+
+nano /opt/kafka/config/server.properties
+listeners=PLAINTEXT://0.0.0.0:9092
+advertised.listeners=PLAINTEXT://172.22.165.97:9092
+log.dirs=/opt/kafka/logs
+zookeeper.connect=localhost:2181
+
+2. Start ZooKeeper service
+
+cd /opt/kafka
+bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
+
+3. Start Kafka broker service
+
+cd /opt/kafka
+bin/kafka-server-start.sh -daemon config/server.properties
+
+4. Verify that Kafka broker is running
+
+jps
+
+5. Create required topics
+
+cd /opt/kafka
+bin/kafka-topics.sh --create --topic topic-cpu  --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+bin/kafka-topics.sh --create --topic topic-mem  --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+bin/kafka-topics.sh --create --topic topic-net  --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+bin/kafka-topics.sh --create --topic topic-disk --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+
+6. List all topics
+
+bin/kafka-topics.sh --list --bootstrap-server 172.22.165.97:9092
+
+7. Monitor messages (optional)
+
+bin/kafka-console-consumer.sh --bootstrap-server 172.22.165.97:9092 --topic topic-cpu --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server 172.22.165.97:9092 --topic topic-mem --from-beginning
+
+8. Reset / Clear topics
+
+bin/kafka-topics.sh --delete --topic topic-cpu  --bootstrap-server 172.22.165.97:9092
+bin/kafka-topics.sh --delete --topic topic-mem  --bootstrap-server 172.22.165.97:9092
+bin/kafka-topics.sh --delete --topic topic-net  --bootstrap-server 172.22.165.97:9092
+bin/kafka-topics.sh --delete --topic topic-disk --bootstrap-server 172.22.165.97:9092
+
+Recreate topics
+
+bin/kafka-topics.sh --create --topic topic-cpu  --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+bin/kafka-topics.sh --create --topic topic-mem  --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+bin/kafka-topics.sh --create --topic topic-net  --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+bin/kafka-topics.sh --create --topic topic-disk --bootstrap-server 172.22.165.97:9092 --partitions 1 --replication-factor 1
+
+9. Stop Kafka and Zookeeper
+
+bin/kafka-server-stop.sh
+bin/zookeeper-server-stop.sh
